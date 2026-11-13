@@ -12,7 +12,7 @@ const data= {
     graduation_year: 2023,
 }
 
-async function main() {
+async function connectDb() {
   console.log("Connecting to MongoDB...");
   await client.connect();
   console.log("Connected successfully to server");
@@ -26,7 +26,9 @@ async function main() {
   return "done.";
 }
 
-main()
-  .then(console.log)
-  .catch(console.error)
-  .finally(() => client.close());
+// connectDb()
+//   .then(console.log)
+//   .catch(console.error)
+//   .finally(() => client.close());
+
+module.exports = connectDb;
