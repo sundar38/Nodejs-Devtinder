@@ -1,8 +1,11 @@
 {
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cookieparser": "^0.1.0",
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.8.0",
     "mongoose": "^9.12.1",
     "nodemon": "^3.1.14",
@@ -13,7 +16,8 @@
   "description": "devtindere project-react, node",
   "main": "database.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

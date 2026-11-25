@@ -2,6 +2,7 @@ const mongoose= require('mongoose');
 
 const {Schema, model}= mongoose;
 const validator= require('validator');
+const jwt= require('jsonwebtoken');
 const userSchema= new Schema({
     first_name: {
         type: String,
@@ -15,15 +16,15 @@ const userSchema= new Schema({
         type: String,
         minlength: 2,
         maxlength: 50,
-        required: true,
+        required: false,
     },
     company: {
         type: String,
-        required: true
+        required: false
     },
     graduation_year: {
         type: Number,
-        required: true
+        required: false
     },
     skills: {
         type: [String],
@@ -53,7 +54,7 @@ const userSchema= new Schema({
     gender: {
         type: String,
         enum: ['male', 'female', 'other'],
-        required: true,
+        required: false,
         validate(value) {
             if(!['male', 'female', 'other'].includes(value)){
                 throw new Error('Invalid gender value');
@@ -77,6 +78,26 @@ const userSchema= new Schema({
         default: 'This user has not provided any information about themselves yet.'
     }
 }, {timestamps: true});
+
+// Instance method: call as user.getJWT() on any user document.
+// Must be a regular function (not an arrow function) so `this` is the user.
+userSchema.methods.getJWT = async function () {
+    const user = this; // `this` = the user document this method was called on
+    const token = await jwt.sign(
+        { _id: user._id },
+        process.env.JWT_TOKEN_ENCRYPTION_STRING,
+        { expiresIn: "7d" }
+    );
+    return token;
+};
+
+userSchema.methods.validatePassword= async function ( userEnteredPassword ) {
+    const user= this;
+    const passwordHash= user.password;
+    const isPasswordValid= await bcrypt.compareSync(userEnteredPassword, passwordHash);
+
+    return isPasswordValid
+}
 
 const UserModal= mongoose.model('User', userSchema);
 
