@@ -3,6 +3,7 @@ const mongoose= require('mongoose');
 const {Schema, model}= mongoose;
 const validator= require('validator');
 const jwt= require('jsonwebtoken');
+const bcrypt= require('bcrypt');
 const userSchema= new Schema({
     first_name: {
         type: String,
@@ -82,7 +83,7 @@ const userSchema= new Schema({
 // Instance method: call as user.getJWT() on any user document.
 // Must be a regular function (not an arrow function) so `this` is the user.
 userSchema.methods.getJWT = async function () {
-    const user = this; // `this` = the user document this method was called on
+    const user = this; // `this` = via this keywprd here, we can able to access the document which called this function
     const token = await jwt.sign(
         { _id: user._id },
         process.env.JWT_TOKEN_ENCRYPTION_STRING,
@@ -94,8 +95,7 @@ userSchema.methods.getJWT = async function () {
 userSchema.methods.validatePassword= async function ( userEnteredPassword ) {
     const user= this;
     const passwordHash= user.password;
-    const isPasswordValid= await bcrypt.compareSync(userEnteredPassword, passwordHash);
-
+    const isPasswordValid= await bcrypt.compare(userEnteredPassword, passwordHash);
     return isPasswordValid
 }
 

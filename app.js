@@ -5,8 +5,8 @@ const port = process.env.PORT || 3000;
 const userModal = require("./src/models/user");
 const connectDb = require("./database.js");
 const bcrypt = require("bcrypt");
-const jwt= require("jsonwebtoken");
-const cookieParser= require("cookie-parser")
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 // app.get("/", (req, res) => {
 //   res.send("Hello, World!");
@@ -41,16 +41,16 @@ app.post("/signup", async (req, res) => {
   try {
     const { first_name, email, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
-    const userData= {
+    const userData = {
       first_name,
       password: passwordHash,
       email,
-    }
+    };
     const user = new userModal(userData);
     const savedUser = await user.save();
     res.send("User created successfully");
-    console.log("saved user is", savedUser)
-   // res.status(201).json(savedUser);
+    console.log("saved user is", savedUser);
+    // res.status(201).json(savedUser);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -104,14 +104,14 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.send("User not found");
     }
-    const isPasswordMatch = await user.validatePassword();
+    const isPasswordMatch = await user.validatePassword(password);
     if (!isPasswordMatch) {
       return res.send("Invalid password");
     }
     const token = await user.getJWT();
     console.log("token", token);
     res.cookie("token", token, {
-      expires: new Date(Date.now()+ 8*36000000)
+      expires: new Date(Date.now() + 8 * 36000000),
     });
 
     res.send("Login successful");
@@ -131,8 +131,7 @@ app.get("/profile", userAuth, async (req, res) => {
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
-
-})
+});
 
 // app.post("/signup", async (req, res) => {
 //   try {
